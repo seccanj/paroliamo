@@ -7,18 +7,21 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-public class Dizionario {
+public class Dictionay {
 	
-	private static final String SAMPLE_CSV_FILE_PATH = "./dizionario.csv";
+	private static final String SAMPLE_CSV_FILE_PATH = "./italian-dictionary.csv";
 
-	private List<Parola> parole = new ArrayList<>();
+	private Set<Word> tempWords = new HashSet<>();
+	private List<Word> words = new ArrayList<>();
 	
-	public Dizionario() {
+	public Dictionay() {
         try (
             Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH));
             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
@@ -26,21 +29,22 @@ public class Dizionario {
             // Reading Records One by One in a String array
             String[] nextRecord;
             while ((nextRecord = csvReader.readNext()) != null) {
-            	Parola p = new Parola();
-            	p.parola = nextRecord[0];
-            	p.frequenza = Integer.parseInt(nextRecord[1]);
-            	p.lunghezza = Integer.parseInt(nextRecord[2]);
+            	Word p = new Word();
+            	p.word = nextRecord[0].toLowerCase();
+            	p.length = p.word.length();
             	
-                //System.out.println(p.parola + "   ");
-                
-                parole.add(p);
+            	if (p.length >= 2) {
+            		tempWords.add(p);
+            	}
             }
 
-    		Collections.sort(parole, new Comparator<Parola>() {
+            words.addAll(tempWords);
+            
+    		Collections.sort(words, new Comparator<Word>() {
 
     			@Override
-    			public int compare(Parola p1, Parola p2) {
-    				return p2.lunghezza - p1.lunghezza;
+    			public int compare(Word p1, Word p2) {
+    				return p2.length - p1.length;
     			}
     			
     		});
@@ -50,30 +54,30 @@ public class Dizionario {
 		}
 	}
 	
-	public void findLongestWord(List<String> letters) {
+	public void findLongestWords(List<String> letters) {
 		int maxLen = 0;
 
 		System.out.println("Parole più lunghe:");
 		
-		for (int i=0; i<parole.size(); i++) {
-			Parola p = parole.get(i);
+		for (int i=0; i<words.size(); i++) {
+			Word p = words.get(i);
 			
-			if (p.lunghezza < maxLen - 2) {
+			if (p.length < maxLen - 2) {
 				break;
 			}
 			
 			if (possible(letters, p)) {
-				if (p.lunghezza > maxLen) {
-					maxLen = p.lunghezza;
+				if (p.length > maxLen) {
+					maxLen = p.length;
 				}
 				
-				System.out.println(p.parola);
+				System.out.println(p.word.length() + " " + p.word);
 			}
 		}
 	}
 
-	private boolean possible(List<String> letters, Parola parola) {
-		String p = parola.parola;
+	private boolean possible(List<String> letters, Word word) {
+		String p = word.word;
 		List<String> l = new ArrayList<String>(letters);
 		
 		for (int i=0; i<p.length(); i++) {
