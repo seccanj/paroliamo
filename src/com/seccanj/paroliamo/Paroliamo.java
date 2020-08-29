@@ -8,7 +8,7 @@ public class Paroliamo {
 		
 	public static void main(String[] args) {
 		
-		Dictionay dictionary = new Dictionay();
+		Dictionary dictionary = new Dictionary();
 		
 		Letters letters = new Letters();
 		

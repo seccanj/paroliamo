@@ -1,4 +1,4 @@
-package com.seccanj.paroliamo;
+package com.seccanj.zigzagpuzzle;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -14,14 +14,14 @@ import java.util.Set;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-public class Dictionay {
+public class Dictionary {
 	
 	private static final String SAMPLE_CSV_FILE_PATH = "./italian-dictionary.csv";
 
 	private Set<Word> tempWords = new HashSet<>();
 	private List<Word> words = new ArrayList<>();
 	
-	public Dictionay() {
+	public Dictionary() {
         try (
             Reader reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH));
             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
@@ -30,11 +30,11 @@ public class Dictionay {
             String[] nextRecord;
             while ((nextRecord = csvReader.readNext()) != null) {
             	Word p = new Word();
-            	p.word = nextRecord[0].toLowerCase();
+            	p.word = nextRecord[0].toLowerCase().trim();
             	p.length = p.word.length();
             	
-            	if (p.length >= 2) {
-            		tempWords.add(p);
+            	if (p.length >= 2 && !(p.word.contains("-") || p.word.contains("'") || p.word.contains("/"))) {
+                	tempWords.add(p);
             	}
             }
 
@@ -89,5 +89,26 @@ public class Dictionay {
 		}
 		
 		return true;
+	}
+
+	public String findRandomWord(int len) {
+		String result = null;
+		
+		List<Word> desiredLenWords = new ArrayList<>();
+
+		for (Word word: words) {
+			if (word.length == len) {
+				desiredLenWords.add(word);
+			} else if (word.length < len) {
+				break;
+			}
+		}
+		
+		if (!desiredLenWords.isEmpty()) {
+			result = desiredLenWords.get((int)Math.floor(Math.random()*desiredLenWords.size())).word;
+			System.out.println("Found word '"+result+"'");
+		}
+		
+		return result;
 	}
 }
