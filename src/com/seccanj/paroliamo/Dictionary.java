@@ -1,4 +1,4 @@
-package com.seccanj.zigzagpuzzle;
+package com.seccanj.paroliamo;
 
 import java.io.IOException;
 import java.io.Reader;
